@@ -1,0 +1,14 @@
+[project]
+name = "my-stocks"
+version = "0.1.0"
+description = "주식 투자 분석을 위한 KRX 데이터 수집 및 분석 프로젝트"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pykrx>=1.0.46",
+    "pandas>=2.0.0",
+    "sqlalchemy>=2.0.0",
+    "numpy>=1.24.0",
+    "python-dotenv>=1.0.0",
+    "setuptools>=80.9.0",
+]

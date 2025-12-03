@@ -1,0 +1,54 @@
+# 환경 변수
+.env
+.env.local
+.env.*.local
+
+# 의존성
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+
+# 데이터 파일
+data/
+*.csv
+*.json
+*.db
+*.sqlite
+
+# 리포트
+reports/
+*.pdf
+*.xlsx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log
+logs/
+
+# 빌드
+dist/
+build/
+*.egg-info/
+
+# 테스트
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 임시 파일
+*.tmp
+*.bak
