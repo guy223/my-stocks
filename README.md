@@ -289,9 +289,89 @@ with db.get_session() as session:
     # 세션 자동 종료
 ```
 
+## 🚀 사용 방법
+
+### 일일 리포트 생성 (자동 데이터 수집)
+
+리포트 생성 시 관심 종목의 최신 데이터를 **자동으로 수집**합니다:
+
+```bash
+# 기본: 오늘 날짜 리포트 (스마트 모드 - 데이터 없으면 자동 수집)
+uv run python examples/generate_daily_report.py
+
+# 특정 날짜 리포트
+uv run python examples/generate_daily_report.py 20251204
+
+# 강제 재수집 (기존 데이터가 있어도 최신 데이터로 갱신)
+uv run python examples/generate_daily_report.py --fetch
+
+# 데이터 수집 없이 리포트만 생성
+uv run python examples/generate_daily_report.py --no-fetch
+
+# 수집 범위 지정
+uv run python examples/generate_daily_report.py --mode today   # 당일만
+uv run python examples/generate_daily_report.py --mode recent  # 최근 5일 (기본값)
+uv run python examples/generate_daily_report.py --mode month   # 최근 30일
+```
+
+**스마트 자동 수집 모드**:
+- DB에 해당 날짜 데이터가 **없으면 자동 수집**
+- 데이터가 **이미 있으면 스킵** (API 호출 최소화)
+- 수집 실패해도 리포트는 생성 (기존 데이터 사용)
+
+### 관심 종목 설정
+
+`src/config/watchlist.py` 파일에서 관심 종목을 추가/삭제할 수 있습니다:
+
+```python
+WATCHLIST = [
+    ("267260", "HD현대일렉트릭", "KOSPI"),
+    ("064350", "현대로템", "KOSPI"),
+    # 여기에 새로운 종목 추가
+    # ("005930", "삼성전자", "KOSPI"),
+]
+```
+
+### 수동 데이터 수집
+
+필요 시 데이터만 별도로 수집할 수 있습니다:
+
+```bash
+# 기본: 최근 5일 데이터 수집
+uv run python examples/collect_watchlist_data.py
+
+# 오늘 데이터만
+uv run python examples/collect_watchlist_data.py --today
+
+# 최근 30일 데이터
+uv run python examples/collect_watchlist_data.py --month
+
+# 강제 재수집
+uv run python examples/collect_watchlist_data.py --force
+```
+
 ## 📊 실행 결과 예시
 
-### 데이터 수집 결과
+### 자동 데이터 수집 결과
+```
+============================================================
+1단계: 관심 종목 최신 데이터 수집
+============================================================
+
+📈 관심 종목 데이터 수집 시작: 20251204
+   모드: recent, 강제수집: False
+============================================================
+⏭️  HD현대일렉트릭 (267260): 데이터 이미 존재 (스킵)
+⏭️  현대로템 (064350): 데이터 이미 존재 (스킵)
+
+✅ 수집 완료: 성공 0개, 실패 0개, 스킵 2개
+
+============================================================
+2단계: 일일 리포트 생성
+============================================================
+```
+
+### 데이터 수집 결과 (처음 실행 시)
 ```
 HD현대일렉트릭(267260) 데이터 수집 완료
 - 일별 주가: 243건
