@@ -291,27 +291,67 @@ with db.get_session() as session:
 
 ## 🚀 사용 방법
 
-### 일일 리포트 생성 (자동 데이터 수집)
+### 빠른 시작 (권장)
+
+**간단한 CLI 명령어로 실행할 수 있습니다:**
+
+```bash
+# 일일 리포트 생성 (가장 자주 사용)
+uv run report                    # 오늘 날짜 리포트 + 자동 데이터 수집
+uv run report 20251204           # 특정 날짜 리포트
+uv run report --fetch            # 강제 재수집 후 리포트
+uv run report --no-fetch         # 데이터 수집 없이 리포트만
+
+# 단위 테스트 실행
+uv run test-stocks               # 전체 테스트 실행
+uv run test-stocks -v            # 상세 출력
+uv run test-stocks tests/unit/test_krx_client.py  # 특정 파일만
+
+# 데이터 수집
+uv run collect                   # 관심 종목 데이터 수집
+uv run collect --today           # 오늘 데이터만
+uv run collect --month           # 최근 30일
+
+# 데이터 조회
+uv run query                     # DB에 저장된 데이터 조회
+```
+
+**또는 Make 사용 (Linux/Mac):**
+
+```bash
+make report      # 일일 리포트 생성
+make test        # 단위 테스트 실행
+make test-cov    # 테스트 + 커버리지 리포트
+make collect     # 데이터 수집
+make query       # 데이터 조회
+make clean       # 캐시 정리
+make help        # 도움말
+```
+
+### 상세 사용법
+
+#### 1. 일일 리포트 생성 (자동 데이터 수집)
 
 리포트 생성 시 관심 종목의 최신 데이터를 **자동으로 수집**합니다:
 
 ```bash
-# 기본: 오늘 날짜 리포트 (스마트 모드 - 데이터 없으면 자동 수집)
-uv run python examples/generate_daily_report.py
+# 스마트 모드 (기본): 데이터 없으면 자동 수집
+uv run report                    # 오늘 날짜
+uv run report 20251204           # 특정 날짜
 
-# 특정 날짜 리포트
-uv run python examples/generate_daily_report.py 20251204
+# 강제 재수집: 기존 데이터가 있어도 최신으로 갱신
+uv run report --fetch
 
-# 강제 재수집 (기존 데이터가 있어도 최신 데이터로 갱신)
-uv run python examples/generate_daily_report.py --fetch
-
-# 데이터 수집 없이 리포트만 생성
-uv run python examples/generate_daily_report.py --no-fetch
+# 수집 비활성화: DB에 있는 데이터만 사용
+uv run report --no-fetch
 
 # 수집 범위 지정
-uv run python examples/generate_daily_report.py --mode today   # 당일만
-uv run python examples/generate_daily_report.py --mode recent  # 최근 5일 (기본값)
-uv run python examples/generate_daily_report.py --mode month   # 최근 30일
+uv run report --mode today       # 당일만
+uv run report --mode recent      # 최근 5일 (기본값)
+uv run report --mode month       # 최근 30일
+
+# 조합 예제
+uv run report 20251204 --fetch --mode month
 ```
 
 **스마트 자동 수집 모드**:
@@ -319,7 +359,29 @@ uv run python examples/generate_daily_report.py --mode month   # 최근 30일
 - 데이터가 **이미 있으면 스킵** (API 호출 최소화)
 - 수집 실패해도 리포트는 생성 (기존 데이터 사용)
 
-### 관심 종목 설정
+#### 2. 단위 테스트 실행
+
+```bash
+# 전체 테스트
+uv run test-stocks
+
+# 특정 파일만
+uv run test-stocks tests/unit/test_krx_client.py
+
+# 특정 테스트 함수만
+uv run test-stocks tests/unit/test_krx_client.py::TestKRXClient::test_get_ohlcv
+
+# 키워드로 필터링
+uv run test-stocks -k "client"
+
+# 커버리지 리포트
+uv run test-stocks --cov=src --cov-report=html
+
+# 상세 출력
+uv run test-stocks -vv
+```
+
+#### 3. 관심 종목 설정
 
 `src/config/watchlist.py` 파일에서 관심 종목을 추가/삭제할 수 있습니다:
 
@@ -332,22 +394,32 @@ WATCHLIST = [
 ]
 ```
 
-### 수동 데이터 수집
-
-필요 시 데이터만 별도로 수집할 수 있습니다:
+#### 4. 데이터 수집
 
 ```bash
-# 기본: 최근 5일 데이터 수집
-uv run python examples/collect_watchlist_data.py
+# 관심 종목 데이터 수집
+uv run collect                   # 최근 5일 (기본)
+uv run collect --today           # 오늘만
+uv run collect --month           # 최근 30일
+uv run collect --force           # 강제 재수집
+uv run collect 20251203          # 특정 날짜 기준
+```
 
-# 오늘 데이터만
-uv run python examples/collect_watchlist_data.py --today
+### 기존 방식 (여전히 지원)
 
-# 최근 30일 데이터
-uv run python examples/collect_watchlist_data.py --month
+Python 스크립트를 직접 실행할 수도 있습니다:
 
-# 강제 재수집
-uv run python examples/collect_watchlist_data.py --force
+```bash
+# 리포트 생성
+python examples/generate_daily_report.py
+python examples/generate_daily_report.py 20251204
+
+# 데이터 수집
+python examples/collect_watchlist_data.py
+
+# 테스트 실행
+pytest
+pytest tests/unit/test_krx_client.py
 ```
 
 ## 📊 실행 결과 예시

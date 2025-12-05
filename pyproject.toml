@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "my-stocks"
 version = "0.1.0"
@@ -12,6 +16,12 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "setuptools>=80.9.0",
 ]
+
+[project.scripts]
+report = "cli:report_command"
+test-stocks = "cli:test_command"
+collect = "cli:collect_command"
+query = "cli:query_command"
 
 [dependency-groups]
 dev = [
