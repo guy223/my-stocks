@@ -192,7 +192,9 @@ my-stocks/
 │       ├── test_database_connection.py  # Database 연결 테스트
 │       ├── test_krx_client.py          # KRX 클라이언트 테스트
 │       ├── test_krx_saver.py           # 데이터 저장 테스트
-│       └── test_database_queries.py     # 데이터 조회 테스트
+│       ├── test_database_queries.py    # 데이터 조회 테스트
+│       ├── test_data_fetcher.py        # 데이터 수집 테스트
+│       └── test_daily_report.py        # 리포트 생성 테스트
 │
 ├── .env.example                # 환경 변수 예시
 ├── .gitignore                  # Git 제외 파일
@@ -515,12 +517,14 @@ uv run pytest --cov=src --cov-report=html
 uv run pytest -v
 ```
 
-**테스트 커버리지**:
+**테스트 커버리지** (전체 70%):
 - Database 연결: 100%
 - KRX 클라이언트: 100%
+- 데이터 수집 (data_fetcher): 97%
+- 리포트 생성 (daily_report): 97%
 - 데이터 조회: 97%
 - 데이터 저장: 74%
-- 총 56개 테스트, 전체 통과 ✅
+- 총 104개 테스트, 전체 통과 ✅
 
 ## 📝 주의사항
 
