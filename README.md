@@ -101,6 +101,30 @@ uv sync
 cp .env.example .env
 ```
 
+### VSCode 설정 (Pylance 오류 해결)
+
+VSCode 사용 시 Pylance가 올바른 Python 환경을 인식하도록 설정합니다:
+
+**방법 1: 자동 설정 (권장)**
+- 프로젝트에 이미 `.vscode/settings.json` 파일이 포함되어 있습니다
+- VSCode 재시작 또는 "Python: Select Interpreter"에서 `.venv/bin/python` 선택
+
+**방법 2: 수동 설정**
+- `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`)
+- "Python: Select Interpreter" 입력
+- `.venv/bin/python` 선택
+
+**설정 확인**:
+```bash
+# 가상환경이 올바르게 설정되었는지 확인
+ls -la .venv/bin/python
+```
+
+**문제 해결**:
+- Pylance가 `sqlalchemy`, `pytest` 등을 찾지 못하는 경우
+  - VSCode 재시작 또는 "Developer: Reload Window" 실행
+  - Python 인터프리터가 `.venv/bin/python`으로 설정되었는지 확인
+
 ## 📖 사용 방법
 
 ### 1. 데이터 수집
