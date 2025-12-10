@@ -48,7 +48,14 @@ class DailyReport:
 
     def generate_market_overview(self, date_str: str) -> str:
         """시장 개황 섹션 생성"""
-        indices = self.market_summary.get_index_info(date_str)
+        try:
+            indices = self.market_summary.get_index_info(date_str)
+        except Exception as e:
+            # 데이터 없음 예외를 상위로 전파
+            if "데이터 없음" in str(e) or isinstance(e, ValueError):
+                raise ValueError(f"데이터 없음: {date_str}") from e
+            # 다른 예외는 그대로 전파
+            raise
 
         report = "=" * 80 + "\n"
         report = report + f"📊 시장 개황 ({date_str})\n"

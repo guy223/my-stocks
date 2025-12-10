@@ -41,9 +41,18 @@ class MarketSummary:
                 except:
                     continue
 
-            # KOSPI 지수
-            kospi = stock.get_index_ohlcv(date_str, date_str, "1001")
-            kosdaq = stock.get_index_ohlcv(date_str, date_str, "2001")
+            # KOSPI 지수 (데이터 없으면 예외 발생 가능)
+            try:
+                kospi = stock.get_index_ohlcv(date_str, date_str, "1001")
+                kosdaq = stock.get_index_ohlcv(date_str, date_str, "2001")
+            except KeyError as e:
+                logger.warning(f"{date_str} 날짜의 지수 데이터가 없습니다 (KeyError): {e}")
+                raise ValueError(f"데이터 없음: {date_str}") from e
+
+            # DataFrame이 비어있으면 데이터 없음
+            if kospi.empty or kosdaq.empty:
+                logger.warning(f"{date_str} 날짜의 지수 데이터가 비어있습니다")
+                raise ValueError(f"데이터 없음: {date_str}")
 
             result = {}
 
@@ -89,6 +98,9 @@ class MarketSummary:
 
             return result
 
+        except ValueError:
+            # 데이터 없음 예외는 그대로 전파
+            raise
         except Exception as e:
             logger.error(f"지수 정보 조회 실패: {e}")
             return {}

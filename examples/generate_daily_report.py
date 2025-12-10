@@ -15,7 +15,7 @@ import logging
 import sys
 import os
 import argparse
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # src 디렉토리를 경로에 추가
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
@@ -119,13 +119,27 @@ def main():
         logger.info("="*60 + "\n")
 
         report_generator = DailyReport()
-        report = report_generator.generate_report(date_str)
+
+        # 데이터 없으면 어제 날짜로 재시도
+        try:
+            report = report_generator.generate_report(date_str)
+            actual_date = date_str
+        except ValueError as e:
+            if "데이터 없음" in str(e):
+                # 어제 날짜로 재시도
+                yesterday = datetime.strptime(date_str, '%Y%m%d') - timedelta(days=1)
+                yesterday_str = yesterday.strftime('%Y%m%d')
+                logger.warning(f"⚠️  {date_str} 데이터가 없습니다. {yesterday_str}로 리포트를 생성합니다.")
+                report = report_generator.generate_report(yesterday_str)
+                actual_date = yesterday_str
+            else:
+                raise
 
         # 콘솔 출력
         print(report)
 
         # 파일 저장
-        filepath = report_generator.save_report(report)
+        filepath = report_generator.save_report(report, f"daily_report_{actual_date}.txt")
 
         logger.info(f"\n✅ 리포트 생성 완료: {filepath}")
 
